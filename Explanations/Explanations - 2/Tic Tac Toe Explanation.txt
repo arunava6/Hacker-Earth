@@ -1,62 +1,53 @@
-The minimum occurs when everybody wins half of their matches. 
-This is n times (n-1)/2 squared.
+#include<bits/stdc++.h>
 
-Notice that a + b + c is fixed and we need to maximise a^2 + b^2 + c^2.
-Cauchy's inequality can be used for a proof.
+using namespace std;
 
-The maximum occurs when one person wins all their matches, next wins n-1 matches, next n-2 and so on.
-This is the sum of the first n-1 squares.
+#define max 1000000007
 
----------------------------------------------------------
+/*
+The minimum sum of square of the match win by each player will be the fact if each player win same number of matches and it's possible
+that because it's round-robin tournament.So total match possible NC2 (N! / 2!*(N-2)!). If N players win same number of matches .Then
+each player will win (NC2/N) matches. So , for one player the sum will be (NC2/N)^2. for N players , the sum will be N*((NC2/N)^2)
+The term (NC2/N) will be expressed in normal form (N-1)/2 now, square of this (N-1)*(N-1)/4.Totally final form is (N*(N-1)^2)/4
+For maximum case:
+For this i used a greedy approach.assign the best possible values that you can assign at each step. each player plays n-1 games.
+starting from player 1, using greedy approach assume he won all his games...w1=n-1
+player 2 now has n-2 wins as he has already lost against player1...w2=n-2
+similarly w3=n-3
+wn=0
+so answer= summation (n-1) square from 1 to n.
+Our formula is 1^2 + 2^2 +........+ n^2 = n*(n+1)*(2n+1)/6;
+replace n-1 for n. Now logic is done .
+*/
 
-Coming up with that answer is only half of the solution. It's important to do that in a way that overflow doesn't occur.
+typedef unsigned long long int ll;
+#define mod 1000000007
 
-Now, it isn't possible to write ans = n*(n - 1)*(2n - 1)/6 at one go because the numerator can be 1e27 ... causing overflow.
-
-One way to evaluate the numerator is ...ans =  n*(n - 1) % MOD, ans = ans*(2n - 1) %MOD
-
-This ensures the answer at the first step is 1e9 x 1e9 .. Second step is 1e9 x 1e9 ... Answer is never more than 1e18.
-
-I did this and explicit typecasting but I was getting a wrong answer ... i overlooked the fact that after performing these modular operations .... ans may not be a multiple
-of 6 anymore.
-
-for 15 x 5 = 75 is a multiple of 3 ... but (15 x 5) mod 71 is no longer a multiple of 3.
-
-So, here you have to use the idea of modular inverses ... An inverse of x is y if x.y = 1 (mod n) ... Dividing a number with x is equivalent to mulitplying with y.
-
-And also use Fermat's Little Theorem
-
-a^{p - 1} = 1 (mod p), if p is a prime 
-
-Multiplying both sides by a^{-1}, we get, 
-
-a^{p - 2} = a^{-1} ( mod p).
-
-----------------------------------------
-
-Use modular exponentiation to get the answer. Multiply by 6 inverse. Also be careful answer is never more than 1e18 at any step.
-
--------------------------------------------------------------
-
-void solve()
+ll sumofsquares(ll n)
 {
-    const int MOD = 1e9 + 7;
-    long long maximum, minimum;
-    int no_of_players;
-    scanf("%d", &no_of_players);
-    
-    //Max = sum of first n-1 squares ... Write it in a form to avoid overflow
-    long long six_inverse = power(6, MOD - 2, MOD); 
-    maximum =  (no_of_players - 1)*1LL*(no_of_players) %MOD;
-    maximum = ( maximum*(2LL*no_of_players - 1) ) %MOD;
-    maximum = ( maximum*six_inverse) %MOD;
-    
-    
-    int no_of_matches = no_of_players - 1; //Play everyone but yourself.
-    int wins = no_of_matches/2; //Everyone wins half their matches
-    long long wins_squared = (wins*1LL*wins) % MOD;
-    
-    minimum = (no_of_players*wins_squared) % MOD;
-    
-    printf("%lld %lld\n",minimum, maximum);
+    n=n%mod;
+    ll ans=(((n*(n-1))%mod*(2*n-1))%mod * 166666668)%mod;
+    return ans%mod;
 }
+
+ll minimumrules(ll n)
+{
+
+    ll ans=(((((((n%mod)*((n-1)%mod))%mod)*(n-1)%mod))%mod)*(250000002%mod))%mod;
+    return ans%mod;
+}
+
+int main()
+
+{
+   ll t,n;
+   scanf("%llu",&t);
+   while(t--)
+   {
+       scanf("%llu",&n);
+       printf("%llu %llu\n",minimumrules(n),sumofsquares(n));
+   }
+   return 0;
+}
+
+
